@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+
+# Xcode – uživatelská nastavení, nepatří do repa
+xcuserdata/
+*.xcuserstate
+*.moved-aside
+
+# Build výstupy
+DerivedData/
+build/
+dist/
+
+# Swift Package Manager
+.swiftpm/
+.build/
