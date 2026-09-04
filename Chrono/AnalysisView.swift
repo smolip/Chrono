@@ -21,27 +21,9 @@ enum Timeframe: String, CaseIterable, Identifiable {
     case month = "Měsíc"
     case year = "Rok"
     case all = "Vše"
+    case custom = "Vlastní"
 
     var id: String { rawValue }
-
-    /// Po jakých jednotkách se kreslí graf v tomto období.
-    var bucket: Calendar.Component {
-        switch self {
-        case .day: .hour
-        case .week, .month: .day
-        case .year, .all: .month
-        }
-    }
-
-    /// Popisek osy X ve stat baru grafu (pro AxisMarks formát).
-    var axisFormat: Date.FormatStyle {
-        switch self {
-        case .day: .dateTime.hour()
-        case .week: .dateTime.weekday(.abbreviated)
-        case .month: .dateTime.day()
-        case .year, .all: .dateTime.month(.abbreviated)
-        }
-    }
 }
 
 /// Přehled odpracovaného času nad zvoleným obdobím + filtrovaná historie.
@@ -51,6 +33,8 @@ struct AnalysisView: View {
 
     @Environment(\.isSnapshot) private var isSnapshot
     @State private var timeframe: Timeframe = .week
+    @State private var customStart = Calendar.current.date(byAdding: .day, value: -30, to: .now)!
+    @State private var customEnd = Date.now
 
     // MARK: - Odvozená data
 
@@ -67,6 +51,39 @@ struct AnalysisView: View {
             let start = sessions.map(\.startDate).min() ?? now
             return DateInterval(start: cal.startOfDay(for: start),
                                 end: cal.dateInterval(of: .day, for: now)!.end)
+        case .custom:
+            let lo = min(customStart, customEnd)
+            let hi = max(customStart, customEnd)
+            return DateInterval(start: cal.startOfDay(for: lo),
+                                end: cal.dateInterval(of: .day, for: hi)!.end)
+        }
+    }
+
+    /// Granularita grafu – u vlastního rozsahu se volí podle jeho délky.
+    private var bucketComponent: Calendar.Component {
+        switch timeframe {
+        case .day: return .hour
+        case .week, .month: return .day
+        case .year, .all: return .month
+        case .custom:
+            let days = interval.duration / 86_400
+            if days <= 2 { return .hour }
+            if days <= 92 { return .day }
+            return .month
+        }
+    }
+
+    /// Formát popisků osy X podle zvolené granularity.
+    private var axisFormat: Date.FormatStyle {
+        switch bucketComponent {
+        case .hour:
+            return .dateTime.hour()
+        case .day:
+            return interval.duration / 86_400 <= 8
+                ? .dateTime.weekday(.abbreviated)
+                : .dateTime.day().month(.abbreviated)
+        default:
+            return .dateTime.month(.abbreviated)
         }
     }
 
@@ -105,7 +122,13 @@ struct AnalysisView: View {
             }
             .padding(.horizontal, 20)
             .padding(.top, 16)
-            .padding(.bottom, 14)
+            .padding(.bottom, timeframe == .custom ? 8 : 14)
+
+            if timeframe == .custom {
+                customRangeRow
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 14)
+            }
 
             kpiRow
 
@@ -166,7 +189,20 @@ struct AnalysisView: View {
         case .month: "za měsíc"
         case .year: "za rok"
         case .all: "celkem"
+        case .custom: "v rozsahu"
         }
+    }
+
+    /// Dvě datová pole pro vlastní rozsah (Od–Do), vzájemně omezená.
+    private var customRangeRow: some View {
+        HStack(spacing: 12) {
+            DatePicker("Od", selection: $customStart,
+                       in: ...customEnd, displayedComponents: .date)
+            DatePicker("Do", selection: $customEnd,
+                       in: customStart...Date.now, displayedComponents: .date)
+        }
+        .datePickerStyle(.field)
+        .font(.subheadline)
     }
 
     // MARK: - Graf
@@ -174,7 +210,7 @@ struct AnalysisView: View {
     private var chart: some View {
         Chart(buckets, id: \.date) { item in
             BarMark(
-                x: .value("Období", item.date, unit: timeframe.bucket),
+                x: .value("Období", item.date, unit: bucketComponent),
                 y: .value("Hodiny", item.hours)
             )
             .foregroundStyle(Color.accentColor.gradient)
@@ -183,7 +219,7 @@ struct AnalysisView: View {
         .chartXAxis {
             AxisMarks(values: .automatic(desiredCount: 6)) { value in
                 AxisGridLine()
-                AxisValueLabel(format: timeframe.axisFormat)
+                AxisValueLabel(format: axisFormat)
             }
         }
         .chartYAxis {
@@ -202,7 +238,7 @@ struct AnalysisView: View {
     /// Rozpočítá práci do bucketů (hodina/den/měsíc), přesah přes hranice se dělí.
     private var buckets: [(date: Date, hours: Double)] {
         let cal = Calendar.current
-        let component = timeframe.bucket
+        let component = bucketComponent
         var map: [Date: Double] = [:]
 
         // Prázdné buckety přes celé období, ať graf nemá díry.
