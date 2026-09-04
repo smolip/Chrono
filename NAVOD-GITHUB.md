@@ -44,14 +44,19 @@ bude myslet, že je apka rozbitá.
 
 U veřejného repa se hodí. MIT je nejjednodušší – dělej si s tím co chceš, neručím za nic.
 
-### Sdílené schéma
+### Schéma (u Chrona nebylo potřeba řešit)
 
-Xcode si schéma normálně ukládá do `xcuserdata/`, což je v `.gitignore`. Bez sdíleného schématu
-nikomu jinému neprojde `xcodebuild -scheme Chrono`. Oprava:
+Xcode si schémata ukládá do `xcuserdata/`, což je v `.gitignore` – takže se necommitnou.
+U jednoduchých projektů to nevadí: Xcode si schéma **automaticky vygeneruje z targetu**, takže
+`xcodebuild -scheme Chrono` funguje i po čerstvém klonu. Ověřeno klonem do prázdné složky.
+
+Řešit to musíš, jen když má projekt vypnutou autogeneraci schémat nebo vlastní upravené schéma
+(jiné argumenty spuštění, proměnné prostředí, pre-actions). Pak:
 
 **Product → Scheme → Manage Schemes… → zaškrtnout „Shared" → Close**
 
 Vznikne `Chrono.xcodeproj/xcshareddata/xcschemes/Chrono.xcscheme`, který se commitne.
+Zkontrolovat jde přes `xcodebuild -list -project Chrono.xcodeproj`.
 
 ---
 
