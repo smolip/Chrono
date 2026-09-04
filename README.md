@@ -3,13 +3,23 @@
 Menu bar stopky pro macOS s evidencí odpracovaného času. Spustíš stopky, pracuješ, po ukončení
 napíšeš jednou větou co jsi dělal – a záznam se uloží do historie.
 
+## Náhled
+
+<p align="center">
+  <img src="docs/screenshot-prehled.png" alt="Běžící stopky s grafem a přehledem za týden" width="380">
+  <img src="docs/screenshot-vse.png" alt="Historie a souhrn za celou dobu" width="380">
+</p>
+
 ## Co to umí
 
 - **Stopky přímo v menu baru** – běžící čas vidíš nahoře v liště, ovládáš ho z rozbalovacího menu,
   hlavní okno mít otevřené nemusíš
 - **Pauza a pokračování** – přestávka se do odpracovaného času nepočítá
 - **Prompt na popis práce** – po stisku „Ukončit a uložit" se zeptá, co jsi dělal
-- **Historie** – tabulka záznamů (datum, čas od–do, délka, popis) se součtem odpracovaných hodin
+- **Přehled a analýza** – vyber období (Dnes / Týden / Měsíc / Rok / Vše / vlastní rozsah) a uvidíš
+  souhrn (celkem, průměr na den, počet, nejdelší) i sloupcový graf aktivity
+- **Historie** – přehledné karty záznamů (datum, čas od–do, délka, popis), mazání s potvrzením
+- **Export do CSV** – zvolené období jedním klikem do tabulky
 - Data se ukládají **lokálně na tvém Macu** přes SwiftData, nikam se neposílají
 
 ## Požadavky
