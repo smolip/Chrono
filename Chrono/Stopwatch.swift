@@ -76,6 +76,16 @@ final class Stopwatch {
         return (startDate, end)
     }
 
+    #if DEBUG
+    /// Jen pro snapshoty: zafixuje běžící stav s daným uběhlým časem (bez tikání).
+    func debugSeedRunning(elapsed: TimeInterval) {
+        startDate = Date().addingTimeInterval(-elapsed)
+        accumulated = elapsed
+        runningSince = nil
+        state = .running
+    }
+    #endif
+
     private func startTimer() {
         stopTimer()
         tick = .now

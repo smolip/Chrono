@@ -15,6 +15,7 @@
 		BB000000000000000000B006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A006 /* Assets.xcassets */; };
 		BB000000000000000000B008 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A008 /* AppModel.swift */; };
 		BB000000000000000000B009 /* MenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A009 /* MenuBar.swift */; };
+		BB000000000000000000B010 /* Snapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A010 /* Snapshot.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		AA000000000000000000A006 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AA000000000000000000A008 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		AA000000000000000000A009 /* MenuBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBar.swift; sourceTree = "<group>"; };
+		AA000000000000000000A010 /* Snapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snapshot.swift; sourceTree = "<group>"; };
 		AA000000000000000000A007 /* Chrono.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Chrono.entitlements; sourceTree = "<group>"; };
 		AA000000000000000000A0FF /* Chrono.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chrono.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -59,6 +61,7 @@
 				AA000000000000000000A005 /* SessionListView.swift */,
 				AA000000000000000000A002 /* WorkSession.swift */,
 				AA000000000000000000A003 /* Stopwatch.swift */,
+				AA000000000000000000A010 /* Snapshot.swift */,
 				AA000000000000000000A006 /* Assets.xcassets */,
 				AA000000000000000000A007 /* Chrono.entitlements */,
 			);
@@ -149,6 +152,7 @@
 				BB000000000000000000B002 /* WorkSession.swift in Sources */,
 				BB000000000000000000B003 /* Stopwatch.swift in Sources */,
 				BB000000000000000000B001 /* ChronoApp.swift in Sources */,
+				BB000000000000000000B010 /* Snapshot.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
