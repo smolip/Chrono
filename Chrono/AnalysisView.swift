@@ -1,5 +1,6 @@
 import SwiftUI
 import Charts
+import UniformTypeIdentifiers
 
 /// Zapnuté jen při renderu snapshotu – `ImageRenderer` neumí vykreslit `ScrollView`,
 /// tak řádky v tom režimu poskládáme napřímo.
@@ -7,10 +8,19 @@ private struct SnapshotModeKey: EnvironmentKey {
     static let defaultValue = false
 }
 
+/// Umožní snapshotu předvolit období (jinak nelze nastavit @State zvenčí).
+private struct SnapshotTimeframeKey: EnvironmentKey {
+    static let defaultValue: Timeframe? = nil
+}
+
 extension EnvironmentValues {
     var isSnapshot: Bool {
         get { self[SnapshotModeKey.self] }
         set { self[SnapshotModeKey.self] = newValue }
+    }
+    var snapshotTimeframe: Timeframe? {
+        get { self[SnapshotTimeframeKey.self] }
+        set { self[SnapshotTimeframeKey.self] = newValue }
     }
 }
 
@@ -32,9 +42,12 @@ struct AnalysisView: View {
     let onDelete: (WorkSession) -> Void
 
     @Environment(\.isSnapshot) private var isSnapshot
+    @Environment(\.snapshotTimeframe) private var snapshotTimeframe
     @State private var timeframe: Timeframe = .week
     @State private var customStart = Calendar.current.date(byAdding: .day, value: -30, to: .now)!
     @State private var customEnd = Date.now
+    @State private var isExporting = false
+    @State private var exportDocument = CSVDocument(text: "")
 
     // MARK: - Odvozená data
 
@@ -132,14 +145,14 @@ struct AnalysisView: View {
 
             kpiRow
 
-            if totalSeconds > 0 {
+            if totalSeconds > 0 && timeframe != .all {
                 chart
                     .padding(.horizontal, 20)
                     .padding(.top, 6)
                     .padding(.bottom, 4)
             }
 
-            HStack {
+            HStack(spacing: 10) {
                 Text("Historie")
                     .font(.headline)
                 Spacer()
@@ -147,6 +160,16 @@ struct AnalysisView: View {
                     Text(recordsLabel(filtered.count))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
+                    if !isSnapshot {
+                        Button {
+                            exportDocument = CSVDocument(text: makeCSV(filtered))
+                            isExporting = true
+                        } label: {
+                            Label("Export", systemImage: "square.and.arrow.up")
+                        }
+                        .buttonStyle(.borderless)
+                        .help("Exportovat období do CSV")
+                    }
                 }
             }
             .padding(.horizontal, 20)
@@ -167,6 +190,13 @@ struct AnalysisView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .onAppear { if let tf = snapshotTimeframe { timeframe = tf } }
+        .fileExporter(
+            isPresented: $isExporting,
+            document: exportDocument,
+            contentType: .commaSeparatedText,
+            defaultFilename: exportFilename
+        ) { _ in }
     }
 
     // MARK: - KPI
@@ -309,6 +339,54 @@ struct AnalysisView: View {
     private func recordsLabel(_ n: Int) -> String {
         "\(n) \(n == 1 ? "záznam" : n >= 2 && n <= 4 ? "záznamy" : "záznamů")"
     }
+
+    // MARK: - Export CSV
+
+    private var exportFilename: String {
+        let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withFullDate]
+        return "Chrono-\(timeframe.rawValue)-\(iso.string(from: .now))"
+    }
+
+    /// Sestaví CSV z daných záznamů (oddělovač `;` kvůli českému Excelu).
+    private func makeCSV(_ list: [WorkSession]) -> String {
+        func esc(_ s: String) -> String {
+            guard s.contains(where: { $0 == ";" || $0 == "\"" || $0 == "\n" }) else { return s }
+            return "\"" + s.replacingOccurrences(of: "\"", with: "\"\"") + "\""
+        }
+        var out = "Datum;Začátek;Konec;Délka;Hodiny;Poznámka\n"
+        for s in list.sorted(by: { $0.startDate < $1.startDate }) {
+            let datum = s.startDate.formatted(date: .numeric, time: .omitted)
+            let zac = s.startDate.formatted(date: .omitted, time: .shortened)
+            let kon = s.endDate.formatted(date: .omitted, time: .shortened)
+            let hod = String(format: "%.2f", s.duration.hours)
+            out += "\(datum);\(zac);\(kon);\(s.duration.hoursMinutesSeconds);\(hod);\(esc(s.note))\n"
+        }
+        return out
+    }
+}
+
+/// Textový dokument pro `fileExporter`. Přidává UTF-8 BOM, ať Excel správně
+/// zobrazí českou diakritiku.
+struct CSVDocument: FileDocument {
+    static var readableContentTypes: [UTType] { [.commaSeparatedText, .plainText] }
+
+    var text: String
+    init(text: String) { self.text = text }
+
+    init(configuration: ReadConfiguration) throws {
+        if let data = configuration.file.regularFileContents {
+            text = String(decoding: data, as: UTF8.self)
+        } else {
+            text = ""
+        }
+    }
+
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+        var data = Data([0xEF, 0xBB, 0xBF]) // UTF-8 BOM
+        data.append(Data(text.utf8))
+        return FileWrapper(regularFileWithContents: data)
+    }
 }
 
 /// Dlaždice s jedním souhrnným číslem.
@@ -345,6 +423,7 @@ private struct SessionRow: View {
     let session: WorkSession
     let onDelete: (WorkSession) -> Void
     @State private var hovering = false
+    @State private var confirmingDelete = false
 
     private var timeRange: String {
         let start = session.startDate.formatted(date: .omitted, time: .shortened)
@@ -378,7 +457,7 @@ private struct SessionRow: View {
                 .background(.quaternary.opacity(0.5), in: Capsule())
 
             Button {
-                onDelete(session)
+                confirmingDelete = true
             } label: {
                 Image(systemName: "trash")
                     .foregroundStyle(.red)
@@ -394,5 +473,16 @@ private struct SessionRow: View {
         .contentShape(Rectangle())
         .onHover { hovering = $0 }
         .animation(.easeOut(duration: 0.12), value: hovering)
+        .confirmationDialog(
+            "Smazat záznam?",
+            isPresented: $confirmingDelete,
+            titleVisibility: .visible
+        ) {
+            Button("Smazat", role: .destructive) { onDelete(session) }
+            Button("Zrušit", role: .cancel) {}
+        } message: {
+            let day = session.startDate.formatted(date: .abbreviated, time: .omitted)
+            Text("\(day) • \(session.duration.hoursMinutesSeconds)\(session.note.isEmpty ? "" : " • \(session.note)")\nTuto akci nelze vrátit zpět.")
+        }
     }
 }

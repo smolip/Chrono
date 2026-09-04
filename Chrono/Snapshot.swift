@@ -18,6 +18,10 @@ enum Snapshotter {
         CommandLine.arguments.contains("--running")
     }
 
+    static var snapshotTimeframe: Timeframe? {
+        CommandLine.arguments.contains("--all") ? .all : nil
+    }
+
     @MainActor
     static func render(to path: String) {
         let container = try! ModelContainer(
@@ -37,6 +41,7 @@ enum Snapshotter {
             .frame(width: 480, height: 760)
             .environment(\.colorScheme, .dark)
             .environment(\.isSnapshot, true)
+            .environment(\.snapshotTimeframe, snapshotTimeframe)
 
         let renderer = ImageRenderer(content: view)
         renderer.scale = 2
