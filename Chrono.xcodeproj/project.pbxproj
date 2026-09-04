@@ -11,7 +11,7 @@
 		BB000000000000000000B002 /* WorkSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A002 /* WorkSession.swift */; };
 		BB000000000000000000B003 /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A003 /* Stopwatch.swift */; };
 		BB000000000000000000B004 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A004 /* ContentView.swift */; };
-		BB000000000000000000B005 /* SessionListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A005 /* SessionListView.swift */; };
+		BB000000000000000000B005 /* AnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A005 /* AnalysisView.swift */; };
 		BB000000000000000000B006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A006 /* Assets.xcassets */; };
 		BB000000000000000000B008 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A008 /* AppModel.swift */; };
 		BB000000000000000000B009 /* MenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000A009 /* MenuBar.swift */; };
@@ -23,7 +23,7 @@
 		AA000000000000000000A002 /* WorkSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkSession.swift; sourceTree = "<group>"; };
 		AA000000000000000000A003 /* Stopwatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
 		AA000000000000000000A004 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		AA000000000000000000A005 /* SessionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionListView.swift; sourceTree = "<group>"; };
+		AA000000000000000000A005 /* AnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisView.swift; sourceTree = "<group>"; };
 		AA000000000000000000A006 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AA000000000000000000A008 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		AA000000000000000000A009 /* MenuBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBar.swift; sourceTree = "<group>"; };
@@ -58,7 +58,7 @@
 				AA000000000000000000A008 /* AppModel.swift */,
 				AA000000000000000000A004 /* ContentView.swift */,
 				AA000000000000000000A009 /* MenuBar.swift */,
-				AA000000000000000000A005 /* SessionListView.swift */,
+				AA000000000000000000A005 /* AnalysisView.swift */,
 				AA000000000000000000A002 /* WorkSession.swift */,
 				AA000000000000000000A003 /* Stopwatch.swift */,
 				AA000000000000000000A010 /* Snapshot.swift */,
@@ -148,7 +148,7 @@
 				BB000000000000000000B004 /* ContentView.swift in Sources */,
 				BB000000000000000000B009 /* MenuBar.swift in Sources */,
 				BB000000000000000000B008 /* AppModel.swift in Sources */,
-				BB000000000000000000B005 /* SessionListView.swift in Sources */,
+				BB000000000000000000B005 /* AnalysisView.swift in Sources */,
 				BB000000000000000000B002 /* WorkSession.swift in Sources */,
 				BB000000000000000000B003 /* Stopwatch.swift in Sources */,
 				BB000000000000000000B001 /* ChronoApp.swift in Sources */,

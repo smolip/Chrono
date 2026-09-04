@@ -20,7 +20,7 @@ struct ChronoApp: App {
                 .environment(model)
         }
         .modelContainer(for: WorkSession.self)
-        .defaultSize(width: 480, height: 620)
+        .defaultSize(width: 480, height: 760)
 
         MenuBarExtra {
             MenuBarView()

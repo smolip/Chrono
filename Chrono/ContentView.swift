@@ -11,9 +11,9 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             timerPanel
-            SessionListView(sessions: sessions, onDelete: delete)
+            AnalysisView(sessions: sessions, onDelete: delete)
         }
-        .frame(minWidth: 460, minHeight: 580)
+        .frame(minWidth: 460, minHeight: 680)
         .background(.background)
         .sheet(item: pendingBinding) { pending in
             noteSheet(for: pending)

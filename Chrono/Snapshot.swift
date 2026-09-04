@@ -34,7 +34,7 @@ enum Snapshotter {
         let view = ContentView()
             .environment(model)
             .modelContainer(container)
-            .frame(width: 480, height: 620)
+            .frame(width: 480, height: 760)
             .environment(\.colorScheme, .dark)
             .environment(\.isSnapshot, true)
 
@@ -68,11 +68,14 @@ enum Snapshotter {
             return cal.date(bySettingHour: h, minute: m, second: 0, of: base)!
         }
         let samples: [(Date, Date, String)] = [
-            (date(0, 9, 5), date(0, 10, 42), "Redesign UI – hero panel a karty"),
+            (date(0, 9, 5),  date(0, 10, 42), "Redesign UI – hero panel a karty"),
             (date(0, 13, 10), date(0, 14, 3), "Code review a oprava buildu"),
+            (date(1, 10, 0),  date(1, 12, 15), "Analýza času – graf a KPI"),
             (date(2, 20, 39), date(2, 21, 35), "Bakalářka research"),
-            (date(4, 12, 25), date(4, 14, 3), "Wireframe → LiveView a Update"),
-            (date(9, 11, 46), date(9, 16, 32), "Blacktorch: Frontend finišování"),
+            (date(3, 9, 30),  date(3, 11, 48), "Refaktor datové vrstvy"),
+            (date(4, 12, 25), date(4, 14, 3),  "Wireframe → LiveView a Update"),
+            (date(5, 14, 10), date(5, 15, 5),  "Schůzka a plánování"),
+            (date(6, 11, 46), date(6, 15, 32), "Blacktorch: Frontend finišování"),
         ]
         for (start, end, note) in samples {
             ctx.insert(WorkSession(startDate: start, endDate: end, note: note))

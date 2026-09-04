@@ -34,4 +34,10 @@ extension TimeInterval {
     var hours: Double {
         self / 3600
     }
+
+    /// Kompaktní formát "1:23" (h:mm) pro souhrny.
+    var hoursMinutes: String {
+        let total = Int(self.rounded())
+        return String(format: "%d:%02d", total / 3600, (total % 3600) / 60)
+    }
 }
